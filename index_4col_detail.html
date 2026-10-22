@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f19db5">
+<title>🌸 生写真管理 🤍</title>
+<style>
+:root{--pink:#f19db5;--pink-dark:#bd6687;--pink-light:#fff0f5;--lav:#eee8fa;--ink:#55454c;--muted:#897a81;--line:#f0dce4}
+*{box-sizing:border-box}body{margin:0;background:#fff9fb;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;padding-bottom:90px}
+header{background:linear-gradient(135deg,#f8dce7,#eee6fb);padding:22px 16px 18px;text-align:center}header h1{font-size:23px;margin:0 0 5px;color:#89536b}header p{font-size:12px;margin:0;color:#886e7a}
+main{max-width:760px;margin:0 auto;padding:16px}.page{display:none}.page.active{display:block}h2{font-size:18px;margin:4px 0 14px;color:#89536b}h3{font-size:15px;margin:0 0 12px;color:#89536b}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #d99bb414}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 6px}input,select,button{font:inherit}input[type=text],select,input[type=file]{width:100%;padding:11px;border:1px solid #e7d4dd;border-radius:11px;background:#fff;color:var(--ink)}
+input[type=file]{font-size:13px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{border:0;border-radius:12px;padding:11px 14px;background:var(--pink);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:var(--lav);color:#6f5899}button.danger{background:#f8e5eb;color:#a44c6d}button:disabled{opacity:.5}.primary{width:100%;margin-top:14px}
+.hint{font-size:12px;color:var(--muted);line-height:1.6}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;text-align:center;padding:12px 5px}.stat strong{display:block;font-size:21px;color:var(--pink-dark)}.stat span{font-size:11px;color:var(--muted)}
+.preview-list{display:grid;gap:9px;margin-top:12px}.preview-row{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:center;padding:9px;border-radius:12px;background:#fff8fb;border:1px solid var(--line)}.preview-row img{width:58px;height:70px;object-fit:cover;border-radius:8px;background:#f5edf1}.preview-row .row-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}.preview-row select{padding:8px;font-size:12px;min-width:0}.preview-name{font-size:12px;margin-bottom:5px;overflow-wrap:anywhere}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.photo-card{display:block;width:100%;padding:0;text-align:left;color:inherit;overflow:hidden;background:#fff;border:0;border-radius:8px;cursor:pointer}.photo-card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#f7eef2}.photo-info{display:none}.badge{display:inline-block;background:var(--pink-light);color:#a65376;border-radius:20px;padding:4px 7px;font-size:10px;margin:2px 2px 5px 0}.badge.owned{background:#e9f6ee;color:#42835b}.badge.unowned{background:#f0edf7;color:#7c6b9c}.card-actions{display:flex;gap:6px}.card-actions button{font-size:11px;padding:8px 6px;flex:1}.empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:13px}
+.detail-overlay{display:none;position:fixed;inset:0;z-index:20;background:#33232bd9;padding:18px;overflow-y:auto;align-items:center;justify-content:center}.detail-overlay.open{display:flex}.detail-panel{position:relative;width:100%;max-width:440px;max-height:calc(100dvh - 36px);overflow-y:auto;background:#fff9fb;border-radius:20px;padding:16px;box-shadow:0 12px 40px #0003}.detail-close{display:block;margin-left:auto;background:var(--lav);color:#6f5899;padding:8px 13px}.detail-image{display:block;width:auto;max-width:100%;max-height:52dvh;object-fit:contain;margin:8px auto 14px;border-radius:12px}.detail-title{font-size:17px;color:#89536b;margin:8px 0}.detail-meta{font-size:14px;line-height:1.8;margin:0 0 10px;overflow-wrap:anywhere}.detail-actions{display:flex;gap:8px}.detail-actions button{flex:1}
+.bottom-nav{position:fixed;z-index:5;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;padding:8px max(12px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom))}.nav-btn{background:transparent;color:#a18b95;border-radius:12px;padding:9px 5px;font-size:12px}.nav-btn span{display:block;font-size:20px;margin-bottom:2px}.nav-btn.active{background:var(--pink-light);color:#a65376}
+@media(min-width:600px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}.preview-list{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><h1>🌸 生写真管理 🤍</h1><p>大切なコレクションを、かわいく整理しよう</p></header>
+<main>
+<section id="registerPage" class="page active">
+<h2>📸 写真登録</h2>
+<div class="panel">
+<h3>写真をまとめて登録</h3>
+<label for="images">登録する写真（複数選択OK）</label><input id="images" type="file" accept="image/*" multiple>
+<p class="hint">写真を選んだあと、1枚ずつポーズを設定できるよ。1枚あたり1.5MB以下がおすすめ。最大100枚まで選択できます。</p>
+<div class="fields"><div><label for="member">メンバー名</label><input id="member" type="text" placeholder="例：山﨑天"></div><div><label for="outfit">衣装名</label><input id="outfit" type="text" placeholder="例：Start over!"></div></div>
+<label for="defaultOwned">所持状況（初期設定）</label><select id="defaultOwned"><option value="true">所持している</option><option value="false">未所持</option></select>
+<div id="previewList" class="preview-list"></div><button id="addAll" class="primary" disabled>選んだ写真をまとめて登録</button>
+<p class="hint">登録した写真はこのブラウザ内に保存されます。別の端末には自動同期されないため、バックアップを大切に保管してね。</p>
+</div>
+<div class="panel"><h3>💾 バックアップ・復元</h3><p class="hint">写真画像も含めてJSONファイルに保存できます。端末変更やデータ復旧に備えて、定期的にバックアップしてね。バックアップファイルには写真が含まれるので、大切に保管してください。</p>
+<button id="backupBtn" class="primary">バックアップを作成</button><label for="restoreFile">バックアップから復元</label><input id="restoreFile" type="file" accept=".json,application/json"><p class="hint">復元すると、今の登録内容はバックアップ内の内容に置き換わります。</p></div>
+</section>
+<section id="collectionPage" class="page">
+<h2>🤍 所持生写真一覧</h2>
+<div class="stats"><div class="stat"><strong id="totalCount">0</strong><span>登録写真</span></div><div class="stat"><strong id="ownedCount">0</strong><span>所持写真</span></div><div class="stat"><strong id="compCount">0</strong><span>コンプ衣装</span></div></div>
+<div class="panel"><div class="filters"><div><label for="filterMember">メンバー</label><select id="filterMember"><option value="">すべて</option></select></div><div><label for="filterOwned">所持状況</label><select id="filterOwned"><option value="all">すべて</option><option value="owned">所持</option><option value="unowned">未所持</option></select></div></div><p class="hint">写真カードの「所持/未所持」で状態を変更できます。削除した写真は元に戻せないので注意してね。</p></div>
+<div id="gallery" class="gallery"></div><div id="emptyMessage" class="empty">まだ写真が登録されていません。写真登録ページから追加してね 🌸</div>
+</section>
+<div id="photoDetail" class="detail-overlay" role="dialog" aria-modal="true" aria-label="写真の詳細"><div class="detail-panel"><button id="detailClose" class="detail-close" type="button">閉じる ✕</button><img id="detailImage" class="detail-image" alt="選択した生写真"><h3 id="detailMember" class="detail-title"></h3><p id="detailOutfit" class="detail-meta"></p><p id="detailPose" class="detail-meta"></p><p id="detailOwned" class="detail-meta"></p><div class="detail-actions"><button id="detailToggle" class="secondary" type="button">所持状況を変更</button><button id="detailDelete" class="danger" type="button">削除</button></div></div></div>
+</main>
+<nav class="bottom-nav" aria-label="ページ切り替え"><button class="nav-btn active" data-page="registerPage"><span>📸</span>写真登録</button><button class="nav-btn" data-page="collectionPage"><span>🗂️</span>所持生写真一覧</button></nav>
+<script>
+const KEY="sakurazaka-photo-manager-v1", POSES=["ヨリ","チュウ","座り","ヒキ","その他"], COMP_POSES=["ヨリ","チュウ","座り","ヒキ"];
+let photos=[],pendingFiles=[],activePhotoId=null;
+try{const saved=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(saved))photos=saved}catch(e){console.warn("保存データを読み込めませんでした",e)}
+const $=id=>document.getElementById(id);
+const safe=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(photos));return true}catch(e){alert("保存容量が足りない可能性があります。写真の枚数や画像サイズを減らすか、先にバックアップを作成してください。");return false}}
+function showPage(pageId){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===pageId));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===pageId));if(pageId==="collectionPage")render();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>showPage(btn.dataset.page)));
+function render(){
+$("totalCount").textContent=photos.length;$("ownedCount").textContent=photos.filter(p=>p.owned).length;
+const sets={};photos.forEach(p=>{const k=`${p.member}|||${p.outfit}`;if(!sets[k])sets[k]=new Set();sets[k].add(p.position)});
+$("compCount").textContent=Object.values(sets).filter(s=>COMP_POSES.every(pos=>s.has(pos))).length;
+const sel=$("filterMember"),old=sel.value,members=[...new Set(photos.map(p=>p.member).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+sel.innerHTML='<option value="">すべて</option>'+members.map(m=>`<option value="${safe(m)}">${safe(m)}</option>`).join("");if(members.includes(old))sel.value=old;
+const member=sel.value,owned=$("filterOwned").value,shown=photos.filter(p=>(!member||p.member===member)&&(owned==="all"||(owned==="owned"?p.owned:!p.owned)));
+$("gallery").innerHTML=shown.map(p=>`<button type="button" class="photo-card" data-open="${safe(p.id)}" aria-label="${safe(p.member)}、${safe(p.outfit)}、${safe(p.position)}の詳細を開く"><img src="${p.image}" alt="${safe(p.member)} ${safe(p.outfit)} ${safe(p.position)}" loading="lazy"></button>`).join("");
+$("emptyMessage").style.display=shown.length?"none":"block";
+}
+$("filterMember").addEventListener("change",render);$("filterOwned").addEventListener("change",render);
+function openPhotoDetail(id){const p=photos.find(x=>x.id===id);if(!p)return;activePhotoId=id;$("detailImage").src=p.image;$("detailImage").alt=`${p.member} ${p.outfit} ${p.position}`;$("detailMember").textContent=p.member||"メンバー未設定";$("detailOutfit").textContent=`写真名・衣装名：${p.outfit||"衣装未設定"}`;$("detailPose").textContent=`ポーズ：${p.position}`;$("detailOwned").textContent=`所持状況：${p.owned?"所持":"未所持"}`;$("detailToggle").textContent=p.owned?"未所持にする":"所持にする";$("photoDetail").classList.add("open");document.body.style.overflow="hidden"}
+function closePhotoDetail(){$("photoDetail").classList.remove("open");document.body.style.overflow="";activePhotoId=null}
+$("gallery").addEventListener("click",e=>{const card=e.target.closest("[data-open]");if(card)openPhotoDetail(card.dataset.open)});
+$("detailClose").addEventListener("click",closePhotoDetail);$("photoDetail").addEventListener("click",e=>{if(e.target===$("photoDetail"))closePhotoDetail()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closePhotoDetail()});
+$("detailToggle").addEventListener("click",()=>{const p=photos.find(x=>x.id===activePhotoId);if(!p)return;p.owned=!p.owned;if(save()){render();openPhotoDetail(p.id)}else p.owned=!p.owned});
+$("detailDelete").addEventListener("click",()=>{if(!activePhotoId||!confirm("この写真を削除する？この操作は元に戻せません。"))return;const old=photos;photos=photos.filter(x=>x.id!==activePhotoId);if(save()){closePhotoDetail();render()}else photos=old});
+$("images").addEventListener("change",()=>{const files=Array.from($("images").files||[]);if(files.length>100){alert("一度に選べる写真は最大100枚です。");$("images").value="";pendingFiles=[];$("previewList").innerHTML="";$("addAll").disabled=true;return}pendingFiles=files;$("previewList").innerHTML="";$("addAll").disabled=!files.length;const defaultOwned=$("defaultOwned").value==="true";
+files.forEach((file,i)=>{const row=document.createElement("div");row.className="preview-row";const img=document.createElement("img");img.alt="プレビュー";const name=document.createElement("div");name.className="preview-name";name.textContent=`${i+1}. ${file.name}`;const fields=document.createElement("div");fields.className="row-fields";const pose=document.createElement("select");pose.setAttribute("aria-label",`${file.name}のポーズ`);pose.innerHTML=POSES.map(p=>`<option value="${p}">${p}</option>`).join("");const own=document.createElement("select");own.setAttribute("aria-label",`${file.name}の所持状況`);own.innerHTML='<option value="true">所持</option><option value="false">未所持</option>';own.value=String(defaultOwned);fields.append(pose,own);const details=document.createElement("div");details.append(name,fields);row.append(img,details);row.dataset.index=String(i);$("previewList").appendChild(row);if(file.type.startsWith("image/")){const reader=new FileReader();reader.onload=()=>img.src=reader.result;reader.readAsDataURL(file)}});
+});
+$("defaultOwned").addEventListener("change",()=>{const v=$("defaultOwned").value;document.querySelectorAll("#previewList .preview-row select[aria-label$='の所持状況']").forEach(el=>el.value=v)});
+function readAsDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error("画像を読み込めませんでした"));reader.readAsDataURL(file)})}
+$("addAll").addEventListener("click",async()=>{if(!pendingFiles.length)return;const member=$("member").value.trim(),outfit=$("outfit").value.trim();if(!member||!outfit){alert("メンバー名と衣装名を入力してね。");return}const rows=Array.from(document.querySelectorAll("#previewList .preview-row")),additions=[];$("addAll").disabled=true;$("addAll").textContent="登録中…";
+try{for(let i=0;i<pendingFiles.length;i++){const file=pendingFiles[i];if(!file.type.startsWith("image/"))throw new Error(`${file.name}は画像ファイルではありません。`);if(file.size>1.5*1024*1024)throw new Error(`${file.name}が1.5MBを超えています。小さい画像にしてから登録してね。`);const image=await readAsDataURL(file),selects=rows[i].querySelectorAll("select");additions.push({id:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${i}-${Math.random().toString(36).slice(2)}`),image,member,outfit,position:selects[0].value,owned:selects[1].value==="true"})}
+const old=photos;photos=[...photos,...additions];if(!save()){photos=old;return}alert(`${additions.length}枚の写真を登録したよ！`);$("images").value="";$("previewList").innerHTML="";$("member").value="";$("outfit").value="";pendingFiles=[];showPage("collectionPage")
+}catch(err){alert(err.message||"登録できませんでした。画像サイズなどを確認してね。")}finally{$("addAll").disabled=pendingFiles.length===0;$("addAll").textContent="選んだ写真をまとめて登録"}});
+$("backupBtn").addEventListener("click",()=>{const backup={app:"sakurazaka-photo-manager",version:1,exportedAt:new Date().toISOString(),photos},blob=new Blob([JSON.stringify(backup)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`sakurazaka-photo-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);alert("バックアップを作成したよ。ファイルが保存されたことを確認してね！")});
+$("restoreFile").addEventListener("change",async()=>{const file=$("restoreFile").files[0];if(!file)return;try{const parsed=JSON.parse(await file.text()),incoming=Array.isArray(parsed)?parsed:parsed.photos;if(!Array.isArray(incoming)||!incoming.every(p=>p&&typeof p.id==="string"&&typeof p.image==="string"&&p.image.startsWith("data:image/")&&typeof p.member==="string"&&typeof p.outfit==="string"&&POSES.includes(p.position)&&typeof p.owned==="boolean"))throw new Error("このファイルは対応する生写真管理アプリのバックアップではないみたいです。");if(!confirm(`${incoming.length}枚の写真を復元します。現在の登録内容は置き換わります。続ける？`))return;const old=photos;photos=incoming;if(!save()){photos=old;return}alert(`${photos.length}枚の写真を復元したよ！`);render();showPage("collectionPage")}catch(err){alert(err.message||"ファイルを読み込めませんでした。")}finally{$("restoreFile").value=""}});
+render();
+</script>
+</body>
+</html>
