@@ -1,1 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>櫻坂46 生写真管理</title>
+<style>
+:root {
+  --pink: #f19db5;
+  --pale: #fff3f7;
+  --white: #fff;
+  --text: #59434c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
+  background: var(--pale);
+  color: var(--text);
+}
+header {
+  background: var(--white);
+  padding: 22px 16px 16px;
+  text-align: center;
+  border-bottom: 2px solid #f9d5e0;
+}
+h1 { font-size: 21px; margin: 0 0 7px; }
+header p { margin: 0; font-size: 12px; color: #997481; }
+main { max-width: 850px; margin: auto; padding: 16px; }
+.panel {
+  background: white; border-radius: 16px; padding: 16px;
+  margin-bottom: 16px; box-shadow: 0 3px 12px #e8b9c733;
+}
+h2 { font-size: 16px; margin: 0 0 12px; }
+input, select, button {
+  font: inherit; border-radius: 10px; padding: 11px;
+}
+input, select {
+  width: 100%; border: 1px solid #edd2dc;
+  background: white; color: var(--text); margin: 5px 0 10px;
+}
+button {
+  border: 0; background: var(--pink); color: white;
+  font-weight: 600; cursor: pointer;
+}
+button.secondary { background: #f8e4ec; color: #805767; }
+button:active { opacity: .8; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stats { display: flex; gap: 10px; }
+.stat {
+  flex: 1; text-align: center; background: white;
+  border: 1px solid #f3d5df; border-radius: 13px; padding: 12px 5px;
+}
+.stat strong { display: block; font-size: 23px; color: #dc7e9e; }
+.stat span { font-size: 11px; }
+.gallery {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+}
+.photo {
+  background: white; border-radius: 14px; overflow: hidden;
+  border: 1px solid #f2d5df;
+}
+.photo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; background: #f9e7ee; }
+.photo-info { padding: 10px; }
+.photo-info strong { display: block; font-size: 14px; overflow-wrap: anywhere; }
+.photo-info p { font-size: 12px; margin: 5px 0; }
+.tag { color: #c56f8d; font-size: 11px; }
+.photo button { width: 100%; margin-top: 6px; padding: 9px 4px; font-size: 12px; }
+.photo button.delete { background: white; color: #a17d89; }
+.empty { text-align: center; padding: 28px 10px; color: #aa8995; font-size: 13px; }
+@media(min-width:600px) {
+  .gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌸 生写真管理 ‎🤍</h1>
+  <p>MY PHOTO COLLECTION</p>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat"><strong id="total">0</strong><span>登録写真</span></div>
+    <div class="stat"><strong id="owned">0</strong><span>所持写真</span></div>
+    <div class="stat"><strong id="complete">0</strong><span>コンプ達成</span></div>
+  </div>
 
+  <section class="panel" style="margin-top:16px">
+    <h2>♡ 写真を追加</h2>
+    <form id="photoForm">
+      <label>写真画像</label>
+      <input id="image" type="file" accept="image/*" required>
+      <div class="row">
+        <div><label>メンバー</label><input id="member" placeholder="例：山﨑天" required></div>
+        <div><label>衣装・シリーズ</label><input id="outfit" placeholder="例：「五月雨よ」MVパフォーマンス衣装" required></div>
+      </div>
+      <div class="row">
+        <div><label>ポーズ</label>
+          <select id="position">
+            <option>ヨリ</option><option>チュウ</option><option>座り</option><option>ヒキ</option><option>その他</option>
+          </select>
+        </div>
+        <div><label>所持状況</label>
+          <select id="isOwned"><option value="false">未所持</option><option value="true">所持</option></select>
+        </div>
+      </div>
+      <button type="submit" style="width:100%">＋ 写真を登録する</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>♡ 写真コレクション</h2>
+    <div class="row">
+      <div><label>メンバーで絞り込む</label><select id="memberFilter"><option value="">すべて</option></select></div>
+      <div><label>所持状況</label>
+        <select id="ownedFilter">
+          <option value="">すべて</option><option value="true">所持のみ</option><option value="false">未所持のみ</option>
+        </select>
+      </div>
+    </div>
+    <div id="gallery" class="gallery"></div>
+    <div id="empty" class="empty">写真がありません 上から追加してください</div>
+  </section>
+</main>
+<script>
+const KEY = "sakurazaka-photo-manager-v1";
+let photos = [];
+try { photos = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch(e) {}
+const $ = id => document.getElementById(id);
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(photos));
+  } catch(e) {
+    alert("保存容量が足りないみたい。画像サイズを小さくして試してね。");
+  }
+}
+function render() {
+  $("total").textContent = photos.length;
+  $("owned").textContent = photos.filter(p => p.owned).length;
+  const sets = {};
+  photos.forEach(p => {
+    const key = p.member + "｜" + p.outfit;
+    if (!sets[key]) sets[key] = new Set();
+    sets[key].add(p.position);
+  });
+  $("complete").textContent = Object.values(sets).filter(s =>
+    s.has("ヨリ") && s.has("チュウ") && s.has("座り") && s.has("ヒキ")
+  ).length;
+
+  const old = $("memberFilter").value;
+  const members = [...new Set(photos.map(p => p.member))].sort();
+  $("memberFilter").innerHTML = '<option value="">すべて</option>' +
+    members.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join("");
+  if (members.includes(old)) $("memberFilter").value = old;
+
+  const filtered = photos.filter(p =>
+    (!$("memberFilter").value || p.member === $("memberFilter").value) &&
+    ($("ownedFilter").value === "" || String(p.owned) === $("ownedFilter").value)
+  );
+  $("gallery").innerHTML = "";
+  $("empty").style.display = filtered.length ? "none" : "block";
+  filtered.forEach(p => {
+    const card = document.createElement("article");
+    card.className = "photo";
+    const img = document.createElement("img");
+    img.src = p.image;
+    img.alt = p.member + "の生写真";
+    const info = document.createElement("div");
+    info.className = "photo-info";
+    info.innerHTML = `<strong>${esc(p.member)}</strong>
+      <p>${esc(p.outfit)}</p><span class="tag">${esc(p.position)}</span>`;
+    const toggle = document.createElement("button");
+    toggle.textContent = p.owned ? "✓ 所持中" : "♡ 未所持";
+    toggle.className = p.owned ? "" : "secondary";
+    toggle.onclick = () => {
+      p.owned = !p.owned; save(); render();
+    };
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.className = "delete";
+    del.onclick = () => {
+      if (confirm("この写真を削除する？")) {
+        photos = photos.filter(x => x.id !== p.id);
+        save(); render();
+      }
+    };
+    info.append(toggle, del);
+    card.append(img, info);
+    $("gallery").append(card);
+  });
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+$("photoForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const file = $("image").files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    alert("画像ファイルを選んでね。"); return;
+  }
+  if (file.size > 1.5 * 1024 * 1024) {
+    alert("この試作品では1枚1.5MB以下の画像を選んでね。");
+    return;
+  }
+  const image = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  photos.push({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    image, member: $("member").value.trim(),
+    outfit: $("outfit").value.trim(),
+    position: $("position").value,
+    owned: $("isOwned").value === "true"
+  });
+  save();
+  e.target.reset();
+  render();
+});
+$("memberFilter").addEventListener("change", render);
+$("ownedFilter").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
