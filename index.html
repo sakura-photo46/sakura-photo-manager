@@ -30,7 +30,7 @@ input[type=file]{font-size:13px}.fields{display:grid;grid-template-columns:1fr 1
 <h3>写真をまとめて登録</h3>
 <label for="images">登録する写真（複数選択OK）</label><input id="images" type="file" accept="image/*" multiple>
 <p class="hint">写真を選んだあと、1枚ずつポーズを設定できるよ。1枚あたり1.5MB以下がおすすめ。最大100枚まで選択できます。</p>
-<div class="fields"><div><label for="member">メンバー名</label><input id="member" type="text" placeholder="例：山﨑天"></div><div><label for="outfit">衣装名</label><input id="outfit" type="text" placeholder="例：Start over!"></div></div>
+<div class="fields"><div><label for="member">メンバー名</label><input id="member" type="text" placeholder="例：山﨑天"></div><div><label for="outfit">衣装名</label><input id="outfit" type="text" placeholder="例：何歳の頃に戻りたいのか？"></div></div>
 <label for="defaultOwned">所持状況（初期設定）</label><select id="defaultOwned"><option value="true">所持している</option><option value="false">未所持</option></select>
 <div id="previewList" class="preview-list"></div><button id="addAll" class="primary" disabled>選んだ写真をまとめて登録</button>
 <p class="hint">登録した写真はこのブラウザ内に保存されます。別の端末には自動同期されないため、バックアップを大切に保管してね。</p>
@@ -67,7 +67,7 @@ $("gallery").innerHTML=shown.map(p=>`<button type="button" class="photo-card" da
 $("emptyMessage").style.display=shown.length?"none":"block";
 }
 $("filterMember").addEventListener("change",render);$("filterOwned").addEventListener("change",render);
-function openPhotoDetail(id){const p=photos.find(x=>x.id===id);if(!p)return;activePhotoId=id;$("detailImage").src=p.image;$("detailImage").alt=`${p.member} ${p.outfit} ${p.position}`;$("detailMember").textContent=p.member||"メンバー未設定";$("detailOutfit").textContent=`写真名・衣装名：${p.outfit||"衣装未設定"}`;$("detailPose").textContent=`ポーズ：${p.position}`;$("detailOwned").textContent=`所持状況：${p.owned?"所持":"未所持"}`;$("detailToggle").textContent=p.owned?"未所持にする":"所持にする";$("photoDetail").classList.add("open");document.body.style.overflow="hidden"}
+function openPhotoDetail(id){const p=photos.find(x=>x.id===id);if(!p)return;activePhotoId=id;$("detailImage").src=p.image;$("detailImage").alt=`${p.member} ${p.outfit} ${p.position}`;$("detailMember").textContent=p.member||"メンバー未設定";$("detailOutfit").textContent=`写真名：${p.outfit||"衣装未設定"}`;$("detailPose").textContent=`ポーズ：${p.position}`;$("detailOwned").textContent=`所持状況：${p.owned?"所持":"未所持"}`;$("detailToggle").textContent=p.owned?"未所持にする":"所持にする";$("photoDetail").classList.add("open");document.body.style.overflow="hidden"}
 function closePhotoDetail(){$("photoDetail").classList.remove("open");document.body.style.overflow="";activePhotoId=null}
 $("gallery").addEventListener("click",e=>{const card=e.target.closest("[data-open]");if(card)openPhotoDetail(card.dataset.open)});
 $("detailClose").addEventListener("click",closePhotoDetail);$("photoDetail").addEventListener("click",e=>{if(e.target===$("photoDetail"))closePhotoDetail()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closePhotoDetail()});
