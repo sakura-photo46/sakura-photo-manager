@@ -1,82 +1,94 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>櫻坂46 生写真管理</title>
+<title>生写真管理</title>
 <style>
 :root {
-  --pink: #f19db5;
-  --pale: #fff3f7;
-  --white: #fff;
-  --text: #59434c;
+  --pink:#f19db5; --pale:#fff3f7; --white:#fff;
+  --text:#59434c;
 }
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
-  background: var(--pale);
-  color: var(--text);
+  margin:0; font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--pale); color:var(--text);
 }
 header {
-  background: var(--white);
-  padding: 22px 16px 16px;
-  text-align: center;
-  border-bottom: 2px solid #f9d5e0;
+  background:white; padding:22px 16px 16px; text-align:center;
+  border-bottom:2px solid #f9d5e0;
 }
-h1 { font-size: 21px; margin: 0 0 7px; }
-header p { margin: 0; font-size: 12px; color: #997481; }
-main { max-width: 850px; margin: auto; padding: 16px; }
+h1 { font-size:21px; margin:0 0 7px; }
+header p { margin:0; font-size:12px; color:#997481; }
+main { max-width:850px; margin:auto; padding:16px; }
 .panel {
-  background: white; border-radius: 16px; padding: 16px;
-  margin-bottom: 16px; box-shadow: 0 3px 12px #e8b9c733;
+  background:white; border-radius:16px; padding:16px;
+  margin-bottom:16px; box-shadow:0 3px 12px #e8b9c733;
 }
-h2 { font-size: 16px; margin: 0 0 12px; }
-input, select, button {
-  font: inherit; border-radius: 10px; padding: 11px;
+h2 { font-size:16px; margin:0 0 12px; }
+input,select,button {
+  font:inherit; border-radius:10px; padding:11px;
 }
-input, select {
-  width: 100%; border: 1px solid #edd2dc;
-  background: white; color: var(--text); margin: 5px 0 10px;
+input,select {
+  width:100%; border:1px solid #edd2dc; background:white;
+  color:var(--text); margin:5px 0 10px;
 }
 button {
-  border: 0; background: var(--pink); color: white;
-  font-weight: 600; cursor: pointer;
+  border:0; background:var(--pink); color:white;
+  font-weight:600; cursor:pointer;
 }
-button.secondary { background: #f8e4ec; color: #805767; }
-button:active { opacity: .8; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stats { display: flex; gap: 10px; }
+button.secondary { background:#f8e4ec; color:#805767; }
+button.danger { background:#a76a7f; }
+button:disabled { opacity:.5; }
+.row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.stats { display:flex; gap:10px; }
 .stat {
-  flex: 1; text-align: center; background: white;
-  border: 1px solid #f3d5df; border-radius: 13px; padding: 12px 5px;
+  flex:1; text-align:center; background:white;
+  border:1px solid #f3d5df; border-radius:13px; padding:12px 5px;
 }
-.stat strong { display: block; font-size: 23px; color: #dc7e9e; }
-.stat span { font-size: 11px; }
+.stat strong { display:block; font-size:23px; color:#dc7e9e; }
+.stat span { font-size:11px; }
 .gallery {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
 }
 .photo {
-  background: white; border-radius: 14px; overflow: hidden;
-  border: 1px solid #f2d5df;
+  background:white; border-radius:14px; overflow:hidden;
+  border:1px solid #f2d5df; min-width:0;
 }
-.photo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; background: #f9e7ee; }
-.photo-info { padding: 10px; }
-.photo-info strong { display: block; font-size: 14px; overflow-wrap: anywhere; }
-.photo-info p { font-size: 12px; margin: 5px 0; }
-.tag { color: #c56f8d; font-size: 11px; }
-.photo button { width: 100%; margin-top: 6px; padding: 9px 4px; font-size: 12px; }
-.photo button.delete { background: white; color: #a17d89; }
-.empty { text-align: center; padding: 28px 10px; color: #aa8995; font-size: 13px; }
+.photo img {
+  width:100%; aspect-ratio:3/4; object-fit:cover;
+  display:block; background:#f9e7ee;
+}
+.photo-info { padding:10px; }
+.photo-info strong { display:block; font-size:14px; overflow-wrap:anywhere; }
+.photo-info p { font-size:12px; margin:5px 0; overflow-wrap:anywhere; }
+.tag { color:#c56f8d; font-size:11px; }
+.photo button { width:100%; margin-top:6px; padding:9px 4px; font-size:12px; }
+.photo button.delete { background:white; color:#a17d89; }
+.empty { text-align:center; padding:28px 10px; color:#aa8995; font-size:13px; }
+.hint { font-size:12px; color:#997481; line-height:1.7; }
+.pose-row {
+  border:1px solid #f3d5df; border-radius:12px;
+  padding:10px; margin:10px 0;
+}
+.pose-row img {
+  width:76px; height:100px; object-fit:cover;
+  border-radius:8px; background:#f9e7ee;
+}
+.pose-controls { flex:1; min-width:0; }
+.pose-item { display:flex; gap:10px; align-items:center; }
+.tools { display:grid; grid-template-columns:1fr; gap:9px; }
+.tools button { width:100%; }
 @media(min-width:600px) {
-  .gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .row { grid-template-columns: 1fr 1fr; }
+  .gallery { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .tools { grid-template-columns:1fr 1fr; }
 }
 </style>
 </head>
 <body>
 <header>
-  <h1>🌸 生写真管理 ‎🤍</h1>
+  <h1>🌸生写真管理🤍</h1>
   <p>MY PHOTO COLLECTION</p>
 </header>
 <main>
@@ -87,26 +99,33 @@ button:active { opacity: .8; }
   </div>
 
   <section class="panel" style="margin-top:16px">
-    <h2>♡ 写真を追加</h2>
-    <form id="photoForm">
-      <label>写真画像</label>
-      <input id="image" type="file" accept="image/*" required>
-      <div class="row">
-        <div><label>メンバー</label><input id="member" placeholder="例：山﨑天" required></div>
-        <div><label>衣装・シリーズ</label><input id="outfit" placeholder="例：「五月雨よ」MVパフォーマンス衣装" required></div>
-      </div>
-      <div class="row">
-        <div><label>ポーズ</label>
-          <select id="position">
-            <option>ヨリ</option><option>チュウ</option><option>座り</option><option>ヒキ</option><option>その他</option>
-          </select>
-        </div>
-        <div><label>所持状況</label>
-          <select id="isOwned"><option value="false">未所持</option><option value="true">所持</option></select>
-        </div>
-      </div>
-      <button type="submit" style="width:100%">＋ 写真を登録する</button>
-    </form>
+    <h2>♡ 写真を一括登録</h2>
+    <p class="hint">同じメンバー・衣装の写真をまとめて選び、写真ごとにポーズを指定して登録できるよ。</p>
+    <label>写真画像（複数選択可）</label>
+    <input id="images" type="file" accept="image/*" multiple>
+    <div class="row">
+      <div><label>メンバー</label><input id="bulkMember" placeholder="例：山﨑天"></div>
+      <div><label>衣装・シリーズ</label><input id="bulkOutfit" placeholder="例：五月雨よ衣装"></div>
+    </div>
+    <label>所持状況（選択した写真共通）</label>
+    <select id="bulkOwned">
+      <option value="false">未所持</option>
+      <option value="true">所持</option>
+    </select>
+    <div id="selectedPhotos"></div>
+    <button id="registerBulk" type="button" style="width:100%" disabled>＋ 選んだ写真を一括登録</button>
+    <p class="hint">写真は1枚1.5MB以下がおすすめ。容量が大きい場合は、枚数を分けて登録してね。</p>
+  </section>
+
+  <section class="panel">
+    <h2>♡ バックアップ・復元</h2>
+    <p class="hint">写真画像と登録情報をJSONファイルに保存するよ。復元すると現在の登録内容がバックアップの内容に置き換わるので、復元前に確認してね。</p>
+    <div class="tools">
+      <button id="backupButton" type="button">バックアップを書き出す</button>
+      <button id="restoreButton" class="secondary" type="button">バックアップから復元</button>
+    </div>
+    <input id="backupFile" type="file" accept=".json,application/json" hidden>
+    <p id="backupStatus" class="hint" aria-live="polite"></p>
   </section>
 
   <section class="panel">
@@ -115,27 +134,47 @@ button:active { opacity: .8; }
       <div><label>メンバーで絞り込む</label><select id="memberFilter"><option value="">すべて</option></select></div>
       <div><label>所持状況</label>
         <select id="ownedFilter">
-          <option value="">すべて</option><option value="true">所持のみ</option><option value="false">未所持のみ</option>
+          <option value="">すべて</option>
+          <option value="true">所持のみ</option>
+          <option value="false">未所持のみ</option>
         </select>
       </div>
     </div>
     <div id="gallery" class="gallery"></div>
-    <div id="empty" class="empty">写真がありません 上から追加してください</div>
+    <div id="empty" class="empty">写真がありません。上から追加してください。</div>
   </section>
 </main>
+
 <script>
 const KEY = "sakurazaka-photo-manager-v1";
-let photos = [];
-try { photos = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch(e) {}
+const POSES = ["ヨリ","チュウ","座り","ヒキ","その他"];
 const $ = id => document.getElementById(id);
+let photos = [];
+let pending = [];
+
+try {
+  const stored = JSON.parse(localStorage.getItem(KEY) || "[]");
+  if (Array.isArray(stored)) photos = stored;
+} catch(e) {
+  alert("保存データを読み込めませんでした。バックアップがある場合は保管してね。");
+}
 
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(photos));
+    return true;
   } catch(e) {
-    alert("保存容量が足りないみたい。画像サイズを小さくして試してね。");
+    alert("保存容量が足りない可能性があります。写真の枚数を減らすか、画像サイズを小さくしてね。今回の変更が保存されていない可能性があります。");
+    return false;
   }
 }
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
 function render() {
   $("total").textContent = photos.length;
   $("owned").textContent = photos.filter(p => p.owned).length;
@@ -146,7 +185,7 @@ function render() {
     sets[key].add(p.position);
   });
   $("complete").textContent = Object.values(sets).filter(s =>
-    s.has("ヨリ") && s.has("チュウ") && s.has("座り") && s.has("ヒキ")
+    ["ヨリ","チュウ","座り","ヒキ"].every(x => s.has(x))
   ).length;
 
   const old = $("memberFilter").value;
@@ -161,6 +200,7 @@ function render() {
   );
   $("gallery").innerHTML = "";
   $("empty").style.display = filtered.length ? "none" : "block";
+
   filtered.forEach(p => {
     const card = document.createElement("article");
     card.className = "photo";
@@ -171,19 +211,26 @@ function render() {
     info.className = "photo-info";
     info.innerHTML = `<strong>${esc(p.member)}</strong>
       <p>${esc(p.outfit)}</p><span class="tag">${esc(p.position)}</span>`;
+
     const toggle = document.createElement("button");
     toggle.textContent = p.owned ? "✓ 所持中" : "♡ 未所持";
     toggle.className = p.owned ? "" : "secondary";
     toggle.onclick = () => {
-      p.owned = !p.owned; save(); render();
+      const previous = p.owned;
+      p.owned = !p.owned;
+      if (save()) render();
+      else p.owned = previous;
     };
+
     const del = document.createElement("button");
     del.textContent = "削除";
     del.className = "delete";
     del.onclick = () => {
       if (confirm("この写真を削除する？")) {
+        const previous = photos;
         photos = photos.filter(x => x.id !== p.id);
-        save(); render();
+        if (save()) render();
+        else photos = previous;
       }
     };
     info.append(toggle, del);
@@ -191,39 +238,170 @@ function render() {
     $("gallery").append(card);
   });
 }
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+
+function showPending() {
+  $("selectedPhotos").innerHTML = "";
+  pending.forEach((item, i) => {
+    const row = document.createElement("div");
+    row.className = "pose-row";
+    const line = document.createElement("div");
+    line.className = "pose-item";
+    const img = document.createElement("img");
+    img.src = item.image;
+    img.alt = "登録予定の写真 " + (i + 1);
+    const controls = document.createElement("div");
+    controls.className = "pose-controls";
+    controls.innerHTML = `<label>写真 ${i + 1} のポーズ</label>`;
+    const select = document.createElement("select");
+    POSES.forEach(pose => {
+      const opt = document.createElement("option");
+      opt.value = pose;
+      opt.textContent = pose;
+      select.append(opt);
+    });
+    select.value = item.position || "ヨリ";
+    select.onchange = () => item.position = select.value;
+    controls.append(select);
+    line.append(img, controls);
+    row.append(line);
+    $("selectedPhotos").append(row);
+  });
+  $("registerBulk").disabled = pending.length === 0;
 }
-$("photoForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const file = $("image").files[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    alert("画像ファイルを選んでね。"); return;
-  }
-  if (file.size > 1.5 * 1024 * 1024) {
-    alert("この試作品では1枚1.5MB以下の画像を選んでね。");
+
+$("images").addEventListener("change", async e => {
+  pending = [];
+  $("backupStatus").textContent = "";
+  const files = Array.from(e.target.files || []);
+  if (files.length > 100) {
+    alert("一度に選べるのは100枚までです。枚数を分けてね。");
+    e.target.value = "";
+    showPending();
     return;
   }
-  const image = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-  photos.push({
-    id: Date.now().toString() + Math.random().toString(16).slice(2),
-    image, member: $("member").value.trim(),
-    outfit: $("outfit").value.trim(),
-    position: $("position").value,
-    owned: $("isOwned").value === "true"
-  });
-  save();
-  e.target.reset();
-  render();
+  for (const file of files) {
+    if (!file.type.startsWith("image/")) {
+      alert(file.name + " は画像ではないためスキップします。");
+      continue;
+    }
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert(file.name + " は1.5MBを超えているためスキップします。");
+      continue;
+    }
+    try {
+      const image = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      pending.push({image, position:"ヨリ"});
+    } catch {
+      alert(file.name + " を読み込めませんでした。");
+    }
+  }
+  showPending();
 });
+
+$("registerBulk").addEventListener("click", () => {
+  const member = $("bulkMember").value.trim();
+  const outfit = $("bulkOutfit").value.trim();
+  if (!member || !outfit) {
+    alert("メンバーと衣装を入力してね。");
+    return;
+  }
+  if (!pending.length) {
+    alert("先に写真を選んでね。");
+    return;
+  }
+  const additions = pending.map(p => ({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    image:p.image, member, outfit, position:p.position,
+    owned:$("bulkOwned").value === "true"
+  }));
+  const previous = photos;
+  photos = photos.concat(additions);
+  if (!save()) {
+    photos = previous;
+    return;
+  }
+  pending = [];
+  $("images").value = "";
+  $("bulkMember").value = "";
+  $("bulkOutfit").value = "";
+  showPending();
+  render();
+  alert(additions.length + "枚を登録したよ！");
+});
+
+$("backupButton").addEventListener("click", () => {
+  try {
+    const data = {
+      app:"sakurazaka-photo-manager",
+      version:1,
+      exportedAt:new Date().toISOString(),
+      photos
+    };
+    const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sakurazaka-photo-backup-" +
+      new Date().toISOString().slice(0,10) + ".json";
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    $("backupStatus").textContent = "バックアップの書き出しを開始したよ。ファイルアプリなどで保存先を確認してね。";
+  } catch(e) {
+    alert("バックアップを作成できませんでした。");
+  }
+});
+
+$("restoreButton").addEventListener("click", () => {
+  $("backupFile").click();
+});
+
+$("backupFile").addEventListener("change", async e => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data || data.app !== "sakurazaka-photo-manager" ||
+        !Array.isArray(data.photos)) {
+      alert("このバックアップファイルは読み込めません。");
+      return;
+    }
+    const valid = data.photos.every(p =>
+      p && typeof p.id === "string" &&
+      typeof p.image === "string" &&
+      p.image.startsWith("data:image/") &&
+      typeof p.member === "string" &&
+      typeof p.outfit === "string" &&
+      POSES.includes(p.position) &&
+      typeof p.owned === "boolean"
+    );
+    if (!valid) {
+      alert("ファイル内のデータ形式が正しくありません。復元しませんでした。");
+      return;
+    }
+    if (!confirm(data.photos.length + "枚のデータを復元します。現在の登録写真は置き換わります。続ける？")) return;
+    const previous = photos;
+    photos = data.photos;
+    if (!save()) {
+      photos = previous;
+      return;
+    }
+    render();
+    $("backupStatus").textContent = "復元が完了したよ。写真の枚数を確認してね。";
+    alert("復元できたよ！");
+  } catch(err) {
+    alert("ファイルを読み込めませんでした。正しいバックアップファイルか確認してね。");
+  }
+});
+
 $("memberFilter").addEventListener("change", render);
 $("ownedFilter").addEventListener("change", render);
 render();
