@@ -23,7 +23,10 @@
 <section id="register" class="tabpane">
 <div class="panel">
 <h2>① セット情報を入力</h2>
-<div class="field"><label for="member">メンバー名</label><input id="member" placeholder="例：山﨑天" autocomplete="off"></div>
+<div class="field"><label for="member">メンバー名</label>
+<select id="member">
+  <option value="山﨑天" selected>山﨑天</option>
+</select>
 <div class="field"><label for="outfit">衣装名(写真名)</label><input id="outfit" placeholder="例：何歳の頃に戻りたいのか？" autocomplete="off"></div>
 <div class="field"><label for="sourceImage">4分割された元画像を選択</label><label class="filepick" for="sourceImage"><strong>画像を選ぶ</strong><span class="hint">ヨリ・チュウ・座り・ヒキが2×2に並んだ画像</span><input id="sourceImage" type="file" accept="image/*"></label><div class="hint" style="margin-top:7px">基本の配置：左上 ヨリ／右上 チュウ／左下 座り／右下 ヒキ。位置が違う場合は、下の種類を変更してね。</div></div>
 <div class="actions" style="margin-top:10px"><button id="addMissingSet" class="secondary">画像なしで未所持として登録</button></div>
