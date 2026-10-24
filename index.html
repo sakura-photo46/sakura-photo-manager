@@ -105,7 +105,71 @@ $('totalStat').textContent=photos.length;
 $('ownedStat').textContent=ownedCount;
 $('completeStat').textContent=completeCount;
 const q=$('search').value.trim().toLowerCase(),filter=$('ownedFilter').value;const sort=$('releaseSort').value;const list=photos.filter(p=>(!q||`${p.member} ${p.outfit} ${p.position}`.toLowerCase().includes(q))&&(filter==='all'||(filter==='owned'?p.owned:!p.owned))).sort((a,b)=>{const am=a.releaseMonth||'9999-99',bm=b.releaseMonth||'9999-99';return sort==='oldest'?am.localeCompare(bm):bm.localeCompare(am)});('count').textContent=`${list.length}枚`; $('galleryEmpty').classList.toggle('hidden',list.length>0);list.forEach(p=>{const el=document.createElement('div');el.className='photo';if(p.image){const im=document.createElement('img');im.src=p.image;im.alt=`${p.member} ${p.outfit} ${p.position}`;el.appendChild(im)}else{const ph=document.createElement('div');ph.style.cssText='width:100%;aspect-ratio:89/127;border-radius:9px;background:linear-gradient(145deg,#fff0f5,#eee9fb);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;color:#bd6687;font-size:12px;font-weight:700';ph.textContent=p.position+'\n未所持';ph.style.whiteSpace='pre-line';el.appendChild(ph)}const name=document.createElement('div');name.className='pname';name.textContent=p.member;const sub=document.createElement('div');sub.className='sub';sub.textContent=`${p.outfit} · ${p.position}`;const pill=document.createElement('span');pill.className='pill';pill.textContent=p.owned?'所持':'未所持';el.append(name,sub,pill);el.addEventListener('click',()=>openModal(p.id));grid.appendChild(el)})}
-function openModal(id){const p=photos.find(x=>x.id===id);if(!p)return;selectedPhotoId=id;$('modalImg').src=p.image||'';$('modalImg').classList.toggle('hidden',!p.image);$('modalInfo').innerHTML='';[['メンバー',p.member],['写真名',p.outfit],['発売時期',p.releaseMonth||'未登録'],['種類',p.position],['所持状況',p.owned?'所持':'未所持']].forEach(([k,v])=>{const row=document.createElement('p');row.style.margin='7px 0';row.innerHTML=`<span class="small">${k}：</span>`;const strong=document.createElement('strong');strong.textContent=v;row.appendChild(strong);$('modalInfo').appendChild(row)});$('toggleOwned').textContent=p.owned?'未所持に変更':'所持に変更';$('modal').classList.remove('hidden')}
+function openModal(id){
+const p=photos.find(x=>x.id===id);
+if(!p)return;
+selectedPhotoId=id;
+$('modalImg').src=p.image||'';
+$('modalImg').classList.toggle('hidden',!p.image);
+const info=$('modalInfo');
+info.innerHTML='';
+const addRow=(label,content)=>{
+const row=document.createElement('p');
+row.style.margin='10px 0';
+const title=document.createElement('label');
+title.className='small';
+title.textContent=label+'：';
+row.appendChild(title);
+row.appendChild(content);
+info.appendChild(row);
+};
+const member=document.createElement('div');
+member.textContent=p.member||'';
+addRow('メンバー',member);
+const outfitInput=document.createElement('input');
+outfitInput.type='text';
+outfitInput.value=p.outfit||'';
+outfitInput.placeholder='衣装名（写真名）';
+outfitInput.style.width='100%';
+addRow('写真名（編集可）',outfitInput);
+const monthInput=document.createElement('input');
+monthInput.type='month';
+monthInput.value=p.releaseMonth||'';
+monthInput.style.width='100%';
+addRow('発売時期（編集可）',monthInput);
+const position=document.createElement('div');
+position.textContent=p.position||'';
+addRow('種類',position);
+const owned=document.createElement('div');
+owned.textContent=p.owned?'所持':'未所持';
+addRow('所持状況',owned);
+const saveButton=document.createElement('button');
+saveButton.textContent='写真名・発売時期を保存';
+saveButton.style.width='100%';
+saveButton.style.marginTop='8px';
+saveButton.onclick=()=>{
+const newOutfit=outfitInput.value.trim();
+if(!newOutfit){
+alert('写真名を入力してね');
+outfitInput.focus();
+return;
+}
+const oldMember=p.member;
+const oldOutfit=p.outfit;
+photos.forEach(photo=>{
+if(photo.member===oldMember&&photo.outfit===oldOutfit){
+photo.outfit=newOutfit;
+photo.releaseMonth=monthInput.value;
+}
+});
+save();
+openModal(id);
+alert('写真名と発売時期を保存したよ！');
+};
+info.appendChild(saveButton);
+$('toggleOwned').textContent=p.owned?'未所持に変更':'所持に変更';
+$('modal').classList.remove('hidden');
+}
 $('closeModal').addEventListener('click',()=>$('modal').classList.add('hidden'));$('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.add('hidden')});
 $('toggleOwned').addEventListener('click',()=>{const p=photos.find(x=>x.id===selectedPhotoId);if(!p)return;p.owned=!p.owned;save();openModal(p.id)});
 $('deletePhoto').addEventListener('click',()=>{const p=photos.find(x=>x.id===selectedPhotoId);if(!p)return;if(confirm(`${p.member}「${p.outfit}」の${p.position}を削除する？`)){photos=photos.filter(x=>x.id!==selectedPhotoId);save();$('modal').classList.add('hidden')}});
